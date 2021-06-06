@@ -11,14 +11,18 @@ public class SecurityConfig  extends WebSecurityConfigurerAdapter{
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
 		http
-		.authorizeRequests()   //allows restricting access.
-		.anyRequest().authenticated()	//Specify that URLs are allowed by any authenticated user
-		.and()              //return the string builder
-		.httpBasic();      //configures basic authentication
+		 .authorizeRequests()
+		 .antMatchers("/admin").hasRole("ADMIN")
+		 .antMatchers("/user").hasAnyRole("USER")
+		 .antMatchers("/").permitAll()
+		 .and().formLogin();
 	}
 	
-	public void configure(AuthenticationManagerBuilder registry) throws Exception {
-		registry.inMemoryAuthentication().withUser("dk").password("{noop}password").roles("ADMIN");
+	public void configure(AuthenticationManagerBuilder auth) throws Exception {
+		auth.inMemoryAuthentication()
+					.withUser("dk").password("{noop}password").roles("ADMIN")
+					.and()
+					.withUser("dhiraj").password("{noop}pass").roles("USER");
 	}
 	
 }
